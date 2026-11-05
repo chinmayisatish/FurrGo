@@ -63,3 +63,4 @@ Write-Host "Health checks:" -ForegroundColor Cyan
 Write-Host "  http://localhost:8000/health"
 Write-Host "  http://localhost:8001/health"
 Write-Host "  http://localhost:8002/health"
+

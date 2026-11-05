@@ -75,3 +75,4 @@ echo "  http://localhost:8001/health"
 echo "  http://localhost:8002/health"
 
 wait
+
