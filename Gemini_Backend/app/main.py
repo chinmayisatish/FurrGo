@@ -37,7 +37,7 @@ def create_application() -> FastAPI:
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
         description=(
-            "Backend API for the Healthcare Monitoring Assistant. "
+            "Backend API for the FurrGo Gemini API. "
             "Provides health monitoring, AI-assisted analysis, "
             "and medication tracking capabilities."
         ),

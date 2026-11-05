@@ -10,12 +10,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Central configuration for the Healthcare Monitoring Assistant."""
+    """Central configuration for the FurrGo Gemini API."""
 
     # ------------------------------------------------------------------ #
     # Application metadata
     # ------------------------------------------------------------------ #
-    APP_NAME: str = "Healthcare Monitoring Assistant"
+    APP_NAME: str = "FurrGo Gemini API"
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
 
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # Server settings
     # ------------------------------------------------------------------ #
     HOST: str = "127.0.0.1"
-    PORT: int = 8000
+    PORT: int = 8001
 
     # --------------------------------------------------------------------------- #
     # Future phase placeholders (optional — not required in Phase 1)

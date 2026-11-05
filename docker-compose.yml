@@ -1,0 +1,98 @@
+# ============================================================
+# FurrGo — Docker Compose
+# Runs all three backend services together.
+#
+# Usage:
+#   cp Healthcare_Backend/.env.example Healthcare_Backend/.env
+#   cp Gemini_Backend/.env.example Gemini_Backend/.env
+#   cp FurrGo_Healthcare/.env.example FurrGo_Healthcare/.env
+#   # Edit each .env with your API keys
+#   docker compose up --build
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # Primary backend — Healthcare_Backend
+  # RAG, medication, fitness, scheduler, Nemotron, ChromaDB
+  # ----------------------------------------------------------
+  healthcare:
+    build:
+      context: ./Healthcare_Backend
+      dockerfile: Dockerfile
+    container_name: furrgo-healthcare
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./Healthcare_Backend/.env
+    volumes:
+      - healthcare_data:/app/data
+      - healthcare_uploads:/app/uploads
+      - healthcare_chroma:/app/chroma_db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # Multimodal backend — Gemini_Backend
+  # Gemini image ingestion + Nemotron text chat
+  # ----------------------------------------------------------
+  gemini:
+    build:
+      context: ./Gemini_Backend
+      dockerfile: Dockerfile
+    container_name: furrgo-gemini
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./Gemini_Backend/.env
+    volumes:
+      - gemini_data:/app/data
+      - gemini_uploads:/app/uploads
+      - gemini_chroma:/app/chroma_db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # Lightweight backend — FurrGo_Healthcare
+  # Nemotron text-only chat + health data tracking
+  # ----------------------------------------------------------
+  furrgo-health:
+    build:
+      context: ./FurrGo_Healthcare
+      dockerfile: Dockerfile
+    container_name: furrgo-health-lite
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./FurrGo_Healthcare/.env
+    volumes:
+      - furrgo_health_data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+# ----------------------------------------------------------
+# Named volumes for persistent data storage
+# ----------------------------------------------------------
+volumes:
+  healthcare_data:
+  healthcare_uploads:
+  healthcare_chroma:
+  gemini_data:
+  gemini_uploads:
+  gemini_chroma:
+  furrgo_health_data:
